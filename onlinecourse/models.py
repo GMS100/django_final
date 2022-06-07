@@ -64,9 +64,9 @@ class Course(models.Model):
     is_enrolled = False
 
     def __str__(self):
-        return "Name: " + self.name + "," + \
-               "Description: " + self.description
-
+#        return "Name: " + self.name + "," + \
+#               "Description: " + self.description
+         return self.name
 
 # Lesson model
 class Lesson(models.Model):
@@ -74,6 +74,9 @@ class Lesson(models.Model):
     order = models.IntegerField(default=0)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     content = models.TextField()
+
+    def __str__(self):
+        return self.title
 
 
 # Enrollment model
@@ -104,12 +107,15 @@ class Enrollment(models.Model):
 class Question(models.Model):
     # Foreign key to lesson
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    #course = models.ForeignKey(Course, on_delete=models.CASCADE)
     # question text
     question_text = models.CharField(max_length=300)
     #question_text = models.TextField()
     # question grade/mark
     grade = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.question_text
 
     # <HINT> A sample model method to calculate if learner get the score of the question
     def is_get_score(self, selected_ids):
@@ -130,7 +136,11 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
-    is_correct = models.BooleanField()
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.choice_text
+
 
 # <HINT> The submission model
 # One enrollment could have multiple submission

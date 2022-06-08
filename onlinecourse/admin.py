@@ -41,6 +41,9 @@ class QuestionAdmin(admin.ModelAdmin):
 #class ChoiceAdmin(admin.ModelAdmin):
 #   fields = ('choice_text', 'is_correct')    
      
+class InstructorAdmin(admin.ModelAdmin):
+    exclude = ("total_learners")
+
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)

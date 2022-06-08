@@ -16,7 +16,7 @@ class Instructor(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-    full_time = models.BooleanField(default=True)
+    full_time = models.BooleanField(default=True, blank=True)
     total_learners = models.IntegerField(default=0)
 
     def __str__(self):
@@ -45,10 +45,10 @@ class Learner(models.Model):
         choices=OCCUPATION_CHOICES,
         default=STUDENT
     )
-    social_link = models.URLField(max_length=200)
+    social_link = models.URLField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.user.username + "," + \
+        return self.user.username + ", " + \
                self.occupation
 
 
@@ -64,9 +64,9 @@ class Course(models.Model):
     is_enrolled = False
 
     def __str__(self):
-#        return "Name: " + self.name + "," + \
-#               "Description: " + self.description
-         return self.name
+        return "Name: " + self.name + "," + \
+               "Description: " + self.description
+#         return self.name
 
 # Lesson model
 class Lesson(models.Model):
@@ -107,7 +107,7 @@ class Enrollment(models.Model):
 class Question(models.Model):
     # Foreign key to lesson
     # lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, default=0, on_delete=models.CASCADE)
     # question text
     question_text = models.CharField(max_length=300)
     #question_text = models.TextField()

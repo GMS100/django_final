@@ -35,8 +35,8 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
     #fields = ('question_text', 'grade')
     #fields = ('lesson', ('question_text', 'grade'))
-    #list_display = ['question_text', 'lesson']
-    #list_filter = ['lesson']
+    list_display = ['question_text', 'course']
+    list_filter = ['course']
 
 #class ChoiceAdmin(admin.ModelAdmin):
 #   fields = ('choice_text', 'is_correct')    

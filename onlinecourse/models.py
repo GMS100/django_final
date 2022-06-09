@@ -66,7 +66,15 @@ class Course(models.Model):
     def __str__(self):
         return "Name: " + self.name + "," + \
                "Description: " + self.description
-#         return self.name
+    
+    def total_score(self):
+        print("in total_score")
+        total_score = 0
+        for question in self.question_set.all():
+            total_score += question.grade
+        print("total score=" + str(total_score))
+        return total_score
+        
 
 # Lesson model
 class Lesson(models.Model):
@@ -121,6 +129,8 @@ class Question(models.Model):
     def is_get_score(self, selected_ids):
         all_answers = self.choice_set.filter(is_correct=True).count()
         selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+        print("all_answers=" + str(all_answers))
+        print("selected_correct=" + str(selected_correct))
         if all_answers == selected_correct:
             return True
         else:
@@ -148,5 +158,9 @@ class Choice(models.Model):
 # One choice could belong to multiple submissions
 class Submission(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    print("enrollment=" + str(enrollment))
     choices = models.ManyToManyField(Choice)
 #    Other fields and methods you would like to design
+
+#    def __str__(self):
+#        return "enrollment=" + str(enrollment) + "  choices=" + str(choices)

@@ -111,26 +111,24 @@ def enroll(request, course_id):
          # Add each selected choice object to the submission object
          # Redirect to show_exam_result with the submission id
 def submit(request, course_id):
-    if request.method == 'POST':
-        print("In submit")
-        #function logic
-        course = Course.objects.get(pk=course_id)
-        user = request.user
-        enrollment = Enrollment.objects.get(user=user, course=course)
-        submission = Submission.objects.create(enrollment=enrollment)
-        answers = extract_answers(request)
-        for answer in answers:
-            submission.choices.add(answer)
-        print("finishing  in submit")
-        print("course id=" + str(course.id))
-        print("submission id=" + str(submission.id))
-        return redirect(show_exam_result(request, course.id, submission.id))
-#        HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id, submission.id)))
+    print("In submit")
+    #function logic
+    #course = Course.objects.get(pk=course_id)
+    course = get_object_or_404(Course, pk=course_id)
+    user = request.user
+    enrollment = Enrollment.objects.get(user=user, course=course)
+    submission = Submission.objects.create(enrollment=enrollment)
+    answers = extract_answers(request)
+    for answer in answers:
+        submission.choices.add(answer)
 
-    else:
-        return redirect(show_exam_result(request, course.id, submission.id))
-        #HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id, submission.id)))
-        #return HttpResponse(content="Request processed")
+    submission.save()
+    print("finishing  in submit")
+    print("course id=" + str(course))
+    print("submission id=" + str(submission))
+    print("submission.choices.all()=" + str(submission.choices.all()))
+#    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id, submission.id)))
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:result', args=(course.id, submission.id)))
 
 # <HINT> A example method to collect the selected choices from the exam form from the request object
 def extract_answers(request):
@@ -151,22 +149,50 @@ def extract_answers(request):
         # Get the selected choice ids from the submission record
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
+# def show_exam_result(request, course_id, submission_id):
+#     print("in show_exam_result")
+#     course = Course.objects.get(id=course_id)
+#     submission = Submission.objects.get(id=submission_id)
+#     choices = submission.choices.all()
+#     score = 0
+# #    selected_ids = []
+
+#     for choice in choices:
+#         if choice.is_correct:
+#             print("Choice=" + str(choice))
+#             print("Grade=" + str(choice.question.grade))
+#             score += choice.question.grade
+# #            selected_ids.append(choice.id)
+
+#     print("Score is " + str(score))       
+
+# #    if Question.is_get_score(choice.question, selected_ids):
+# #        print("is_get_score is True")
+# #    else:
+# #        print("is_get_score is False")
+
+#     print("Score is " + str(score))       
+#     print("about to set context in show_exam_result")
+#     context = {}
+#     context['course'] = course
+#     context['selected'] = choices
+#     context['grade'] = score
+#     print("finishing in show_exam_result")
+#     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
+
 def show_exam_result(request, course_id, submission_id):
-    print("in show_exam_result")
-    course = Course.objects.get(id=course_id)
-    submission = Submission.objects.get(id=submission_id)
-    choices = submission.choices.all()
-    score = 0
-
-#this doesn't calculate the score properly
-#    for choice in choices:
-#       if choice.is_correct:
-#           score = score + 1
-    print("about to set context in show_exam_result")
     context = {}
-    context['course'] = course
-    context['selected_ids'] = choices
-    context['grade'] = score
-    print("finishing in show_exam_result")
-    return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
+    course = Course.objects.get(id = course_id)
+    submit = Submission.objects.get(id = submission_id)
+    selected = Submission.objects.filter(id = submission_id).values_list('choices',flat = True)
+    score = 0
+    for i in submit.choices.all().filter(is_correct=True).values_list('question_id'):
+        score += Question.objects.filter(id=i[0]).first().grade    
+    print("grade=" + str(score))
+    print("selected=" + str(selected))
+    print("course=" + str(course))
 
+    context['selected'] = selected
+    context['grade'] = score
+    context['course'] = course
+    return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)

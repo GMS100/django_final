@@ -68,13 +68,11 @@ class Course(models.Model):
                "Description: " + self.description
     
     def total_score(self):
-        print("in total_score")
         total_score = 0
         for question in self.question_set.all():
             total_score += question.grade
-        print("total score=" + str(total_score))
         return total_score
-        
+     
 
 # Lesson model
 class Lesson(models.Model):
@@ -113,14 +111,9 @@ class Enrollment(models.Model):
     # Has question content
     # Other fields and methods you would like to design
 class Question(models.Model):
-    # Foreign key to lesson
-    # lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, default=0, on_delete=models.CASCADE)
-    # question text
     question_text = models.CharField(max_length=300)
-    #question_text = models.TextField()
-    # question grade/mark
-    grade = models.IntegerField(default=1)
+    grade = models.FloatField(default=1)
 
     def __str__(self):
         return self.question_text
@@ -129,8 +122,6 @@ class Question(models.Model):
     def is_get_score(self, selected_ids):
         all_answers = self.choice_set.filter(is_correct=True).count()
         selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
-        print("all_answers=" + str(all_answers))
-        print("selected_correct=" + str(selected_correct))
         if all_answers == selected_correct:
             return True
         else:
@@ -158,9 +149,4 @@ class Choice(models.Model):
 # One choice could belong to multiple submissions
 class Submission(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
-    print("enrollment=" + str(enrollment))
     choices = models.ManyToManyField(Choice)
-#    Other fields and methods you would like to design
-
-#    def __str__(self):
-#        return "enrollment=" + str(enrollment) + "  choices=" + str(choices)

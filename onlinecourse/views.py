@@ -140,26 +140,12 @@ def show_exam_result(request, course_id, submission_id):
 
     for choice in choices:
         selected_ids.append(choice.id)
-        if choice.is_correct:
-            print("Choice to add: " + str(choice))
-            score += choice.question.grade
-        else:
-            print("Choice not added: " + str(choice))
 
     for question in course.question_set.all():
         if question.is_get_score(selected_ids):
-            print("Include score from question: " + question.question_text + " for " + str(question.grade) + " points")
             actual_score += question.grade
-        else:
-            print("Don't include this question: " + question.question_text)
      
-    print("score= " + str(score))
-    print("actual_score= " + str(actual_score))
-    print("total_score= " + str(course.total_score()))
-    decimal_percent = actual_score/course.total_score()
-    print("decimal percent= " + str(decimal_percent))
     percent_score = int((actual_score/course.total_score())*100)
-    print("percent_score= " + str(percent_score))
 
     context['course'] = course
     context['selected'] = selected_ids

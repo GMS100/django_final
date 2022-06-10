@@ -51,16 +51,9 @@
                 {% endfor %}
             </div>
             <!-- Task: show questions and choices -->
-            <a href="#exam" data-toggle="collapse"><h5>{{course.name}} Exam</h5></a>
-                
-            <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
-            https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
-
-            <!--
-            A collapse example here: 
-            <div id="exam" class="collapse">
-                Click to expand elements within the collapse div
-            </div> -->
+            <button class="btn btn-primary btn-block" type="button" data-toggle="collapse" data-target="#exam" aria-expanded="false" aria-controls="exam">
+                Start Exam
+            </button>
 
             <!-- <HINT> If user is authenticated, show course exam with a list of question -->
             {% if user.is_authenticated %}
